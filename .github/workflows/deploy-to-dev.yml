@@ -1,0 +1,63 @@
+name: Deploy to Dev (on Dispatch)
+
+on:
+  repository_dispatch:
+    types: [deploy-to-dev]
+
+jobs:
+  build-deploy-dev:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout CI Repo
+        uses: actions/checkout@v3
+
+      - name: Checkout Customization Repo
+        uses: actions/checkout@v3
+        with:
+          repository: ZingworksChetan/acumatica-customization-main
+          ref: ${{ github.event.client_payload.branch }}
+          token: ${{ secrets.CICDMAIN }}
+          path: customization
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      # - name: Copy Bin files from Acumatica instance
+      #   run: |
+      #     $source = "C:\Program Files\Acumatica ERP\USSFence\Bin"
+      #     $destination = "customization/AcumaticaUSSFenceCustomizations[2024R1]/bin/Release"
+      #     if (Test-Path $source) {
+      #       New-Item -ItemType Directory -Force -Path $destination | Out-Null
+      #       Copy-Item -Path "$source\*" -Destination $destination -Force -Recurse
+      #     }
+      #   shell: pwsh
+
+      - name: Build Project
+        run: msbuild customization/AcumaticaUSSFenceCustomizations[2024R1]/AcumaticaUSSFenceCustomizations[2024R1].csproj /p:Configuration=Release
+        shell: pwsh
+
+      - name: Copy DLL and PDB to Customization Bin
+        run: |
+          $projectName = "AcumaticaUSSFenceCustomizations`[2024R1`]"
+          $dll = "$projectName.dll"
+          $pdb = "$projectName.pdb"
+          $source = Join-Path $PWD.Path "customization\$projectName\bin\Release"
+          $dest = Join-Path $PWD.Path "customization\Customizations\$projectName\$projectName\Bin"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Copy-Item -LiteralPath (Join-Path $source $dll) -Destination $dest -Force
+          if (Test-Path (Join-Path $source $pdb)) {
+            Copy-Item -LiteralPath (Join-Path $source $pdb) -Destination $dest -Force
+          }
+        shell: pwsh
+
+      - name: Build Customization Package
+        run: pwsh ./buildCustomization.ps1 "AcumaticaUSSFenceCustomizations[2024R120250422]"
+
+      - name: Run Publish Customization
+        shell: pwsh
+        env:
+          ACUMATICA_URL: ${{ secrets.ACUMATICA_DEV_URL }}
+          ACUMATICA_USERNAME: ${{ secrets.ACUMATICA_DEV_USERNAME }}
+          ACUMATICA_PASSWORD: ${{ secrets.ACUMATICA_DEV_PASSWORD }}
+        run: |
+          ./publishCustomization.ps1 "AcumaticaUSSFenceCustomizations[2024R120250422]"
