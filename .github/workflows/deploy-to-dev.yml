@@ -40,7 +40,7 @@ jobs:
 
       - name: Copy DLL and PDB to Customization Bin
         run: |
-          $projectName = "AcumaticaUSSFenceCustomizations`[2024R1`]"
+          $projectName = "AcumaticaUSSFenceCustomizations`[2024R1]"
           $dll = "$projectName.dll"
           $pdb = "$projectName.pdb"
           $source = Join-Path $PWD.Path "customization\$projectName\bin\Release"
@@ -53,7 +53,11 @@ jobs:
         shell: pwsh
 
       - name: Build Customization Package
-        run: pwsh ./buildCustomization.ps1 "AcumaticaUSSFenceCustomizations[2024R120250422]"
+        shell: pwsh
+        run: |
+          $date = Get-Date -Format "yyyyMMdd"
+          $zipName = "AcumaticaUSSFenceCustomizations[2024R1$($date)]"
+          pwsh ./buildCustomization.ps1 $zipName
 
       - name: Run Publish Customization
         shell: pwsh
@@ -62,4 +66,4 @@ jobs:
           ACUMATICA_USERNAME: ${{ secrets.ACUMATICA_DEV_USERNAME }}
           ACUMATICA_PASSWORD: ${{ secrets.ACUMATICA_DEV_PASSWORD }}
         run: |
-          ./publishCustomization.ps1 "AcumaticaUSSFenceCustomizations[2024R120250422]"
+          ./publishCustomization.ps1 $zipName
