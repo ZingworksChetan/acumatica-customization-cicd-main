@@ -16,7 +16,7 @@ jobs:
         with:
           repository: ZingworksChetan/acumatica-customization-main
           ref: ${{ github.event.client_payload.branch }}
-          token: ${{ secrets.CICDTOKEN }}
+          token: ${{ secrets.CICDMAIN }}
           path: customization
 
       - name: Setup MSBuild
