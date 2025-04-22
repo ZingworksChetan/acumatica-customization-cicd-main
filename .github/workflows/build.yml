@@ -1,0 +1,103 @@
+﻿name: Build Acumatica Customization
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment to deploy to (e.g. Dev, QA, Prod)'
+        required: true
+        default: 'Dev'
+      branch:
+        description: 'Git branch to build'
+        required: true
+        default: 'main'
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    env:
+      SOLUTION: 'AcumaticaUSSFenceCustomizations[2024R1].sln'
+      PROJECT: 'AcumaticaUSSFenceCustomizations[2024R1]\AcumaticaUSSFenceCustomizations[2024R1].csproj'
+      ZIP_OUTPUT: 'AcumaticaUSSFenceCustomizations[2024R1].zip'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      # - name: Copy Bin files from Acumatica instance (with fallback logging)
+      #   shell: pwsh
+      #   run: |
+      #     $source = "C:\Program Files\Acumatica ERP\USSFence\Bin"
+      #     $destination = "AcumaticaUSSFenceCustomizations[2024R1]\bin\Release"
+
+      #     Write-Host "🔍 Checking source path: $source"
+      #     if (Test-Path $source) {
+      #      Write-Host "✅ Source path exists."
+      #       New-Item -ItemType Directory -Force -Path $destination | Out-Null
+      #       Copy-Item -Path "$source\*" -Destination $destination -Force -Recurse
+      #       Write-Host "✅ Files copied to $destination"
+      #     } else {
+      #       Write-Host "❌ Source path not found: $source"
+      #       Get-ChildItem "C:\Program Files\Acumatica ERP\" -Recurse -Directory | Where-Object Name -like "*USSFence*" | Format-List FullName
+      #       throw "❌ Cannot find source path: $source"
+      #     }
+
+      - name: Build Project
+        run: msbuild $env:PROJECT /p:Configuration=Release
+        shell: pwsh
+        env:
+          PROJECT: AcumaticaUSSFenceCustomizations[2024R1]\AcumaticaUSSFenceCustomizations[2024R1].csproj
+          NUGET_PACKAGES: ${{ github.workspace }}\.nuget\packages
+
+      - name: Copy DLL and PDB to Customization Bin
+        shell: pwsh
+        run: |
+          $projectName = "AcumaticaUSSFenceCustomizations`[2024R1`]"
+          $dllName = "AcumaticaUSSFenceCustomizations[2024R1].dll"
+          $pdbName = "AcumaticaUSSFenceCustomizations[2024R1].pdb"
+
+          # Full source path
+          $source = Join-Path -Path $PWD.Path -ChildPath "$projectName\bin\Release"
+
+          # Destination inside the Customizations folder
+          $destination = Join-Path -Path $PWD.Path -ChildPath "Customizations\$projectName\$projectName\Bin"
+
+          Write-Host "🔁 Copying built DLL & PDB from: $source"
+          Write-Host "➡️ Destination path: $destination"
+
+          if (Test-Path -LiteralPath $source) {
+             New-Item -ItemType Directory -Force -Path $destination | Out-Null
+
+             $dllSourcePath = Join-Path $source $dllName
+             $pdbSourcePath = Join-Path $source $pdbName
+
+             Copy-Item -LiteralPath $dllSourcePath -Destination $destination -Force
+             Write-Host "✅ DLL copied to $destination"
+
+             if (Test-Path -LiteralPath $pdbSourcePath) {
+                  Copy-Item -LiteralPath $pdbSourcePath -Destination $destination -Force
+                  Write-Host "✅ PDB copied to $destination"
+               } else {
+                  Write-Host "⚠️ PDB file not found: $pdbSourcePath"
+               }
+            } else {
+                 Write-Host "❌ Source path not found: $source"
+           }
+
+      - name: Build CustomizationPackageTools.exe
+        run: |
+            cd CustomizationPackageTools
+            dotnet build --configuration Release
+            cd ..
+        shell: pwsh
+
+      - name: Run Build Customization
+        shell: pwsh
+        run: |
+          cd "${{ github.workspace }}"
+          ./buildCustomization.ps1 "AcumaticaUSSFenceCustomizations[2024R1]"
+
