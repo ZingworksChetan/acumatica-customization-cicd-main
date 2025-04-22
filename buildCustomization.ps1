@@ -8,7 +8,7 @@ if (-not $versionName) {
 }
 
 # Construct paths using System.IO to handle special characters properly
-$customizationPath = [System.IO.Path]::Combine("Customizations", "AcumaticaUSSFenceCustomizations[2024R1]", "AcumaticaUSSFenceCustomizations[2024R1]")
+$customizationPath = [System.IO.Path]::Combine("customization", "Customizations", "AcumaticaUSSFenceCustomizations[2024R1]")
 #$zipFileName = [System.IO.Path]::Combine("acumatica-customization", "Customization", $versionName, "$versionName.zip")
 $zipFileName = [System.IO.Path]::Combine("build", "$versionName.zip")
 $xmlFilePath = [System.IO.Path]::Combine($customizationPath, "_project", "ProjectMetadata.xml")

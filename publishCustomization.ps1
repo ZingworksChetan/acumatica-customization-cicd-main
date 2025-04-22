@@ -8,18 +8,15 @@ if (-not $versionName) {
 }
 
 # Construct paths safely
-$customizationPath = [System.IO.Path]::Combine("Customizations", "AcumaticaUSSFenceCustomizations[2024R1]", "AcumaticaUSSFenceCustomizations[2024R1]")
+$customizationPath = [System.IO.Path]::Combine("customization", "Customizations", "AcumaticaUSSFenceCustomizations[2024R1]")
 #$zipFilePath = [System.IO.Path]::Combine($customizationPath, "$versionName.zip")
 $zipFilePath = [System.IO.Path]::Combine("build", "$versionName.zip")
 $xmlFilePath = [System.IO.Path]::Combine($customizationPath, "_project", "ProjectMetadata.xml")
 
 $packageName = $versionName
-#$serverUrl = $env:ACUMATICA_URL
-#$username = $env:ACUMATICA_USERNAME
-#$password = $env:ACUMATICA_PASSWORD
-$serverUrl = "http://localhost/USSFence/"
-$username = "admin"
-$password = "Zing@2025"
+$serverUrl = $env:ACUMATICA_URL
+$username = $env:ACUMATICA_USERNAME
+$password = $env:ACUMATICA_PASSWORD
 
 # Ensure the ZIP file exists
 if (-not (Test-Path -LiteralPath $zipFilePath)) {
