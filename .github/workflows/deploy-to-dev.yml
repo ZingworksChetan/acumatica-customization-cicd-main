@@ -62,7 +62,7 @@ jobs:
           pwsh ./buildCustomization.ps1 $zipName
 
       - name: Upload ZIP Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build.outputs.zipName }}
           path: build/*.zip
