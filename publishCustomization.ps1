@@ -14,9 +14,9 @@ $zipFilePath = [System.IO.Path]::Combine("build", "$versionName.zip")
 $xmlFilePath = [System.IO.Path]::Combine($customizationPath, "_project", "ProjectMetadata.xml")
 
 $packageName = $versionName
-$serverUrl = $env:ACUMATICA_URL
-$username = $env:ACUMATICA_USERNAME
-$password = $env:ACUMATICA_PASSWORD
+$serverUrl = $env:ACUMATICA_DEV_URL
+$username = $env:ACUMATICA_DEV_USERNAME
+$password = $env:ACUMATICA_DEV_PASSWORD
 
 # Ensure the ZIP file exists
 if (-not (Test-Path -LiteralPath $zipFilePath)) {
