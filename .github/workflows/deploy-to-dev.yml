@@ -42,7 +42,7 @@ jobs:
           $dll = "$projectName.dll"
           $pdb = "$projectName.pdb"
           $source = Join-Path $PWD.Path "customization\$projectName\bin\Release"
-          $dest = Join-Path $PWD.Path "customization\Customizations\$projectName\$projectName\Bin"
+          $dest = Join-Path $PWD.Path "customization\Customizations\$projectName\Bin"
           New-Item -ItemType Directory -Force -Path $dest | Out-Null
           Copy-Item -LiteralPath (Join-Path $source $dll) -Destination $dest -Force
           if (Test-Path (Join-Path $source $pdb)) {
