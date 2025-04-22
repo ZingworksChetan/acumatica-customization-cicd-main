@@ -57,6 +57,7 @@ jobs:
         run: |
           $date = Get-Date -Format "yyyyMMdd"
           $zipName = "AcumaticaUSSFenceCustomizations[2024R1$($date)]"
+          echo "zipName=$zipName" >> $env:GITHUB_OUTPUT
           pwsh ./buildCustomization.ps1 $zipName
 
       - name: Run Publish Customization
@@ -66,4 +67,4 @@ jobs:
           ACUMATICA_USERNAME: ${{ secrets.ACUMATICA_DEV_USERNAME }}
           ACUMATICA_PASSWORD: ${{ secrets.ACUMATICA_DEV_PASSWORD }}
         run: |
-          ./publishCustomization.ps1 $zipName
+          ./publishCustomization.ps1 "${{ steps.build.outputs.zipName }}"
