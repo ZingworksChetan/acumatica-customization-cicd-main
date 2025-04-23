@@ -21,6 +21,18 @@ jobs:
           token: ${{ secrets.CICDMAIN }}
           path: customization
 
+      - name: Checkout DLL Repo
+        uses: actions/checkout@v3
+        with:
+          repository: ZingworksChetan/dll-store
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: dlls
+
+      - name: Copy DLLs
+        run: |
+          Copy-Item "dlls\*.dll" -Destination "customization\AcumaticaUSSFenceCustomizations[2024R1]\bin\Release" -Force
+        shell: pwsh
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
 
@@ -38,34 +50,34 @@ jobs:
         run: msbuild customization/AcumaticaUSSFenceCustomizations[2024R1]/AcumaticaUSSFenceCustomizations[2024R1].csproj /p:Configuration=Release
         shell: pwsh
 
-      - name: Copy DLL and PDB to Customization Bin
-        run: |
-          $projectName = "AcumaticaUSSFenceCustomizations`[2024R1]"
-          $dll = "$projectName.dll"
-          $pdb = "$projectName.pdb"
-          $source = Join-Path $PWD.Path "customization\$projectName\bin\Release"
-          $dest = Join-Path $PWD.Path "customization\Customizations\$projectName\Bin"
-          New-Item -ItemType Directory -Force -Path $dest | Out-Null
-          Copy-Item -LiteralPath (Join-Path $source $dll) -Destination $dest -Force
-          if (Test-Path (Join-Path $source $pdb)) {
-            Copy-Item -LiteralPath (Join-Path $source $pdb) -Destination $dest -Force
-          }
-        shell: pwsh
+      # - name: Copy DLL and PDB to Customization Bin
+      #   run: |
+      #     $projectName = "AcumaticaUSSFenceCustomizations`[2024R1]"
+      #     $dll = "$projectName.dll"
+      #     $pdb = "$projectName.pdb"
+      #     $source = Join-Path $PWD.Path "customization\$projectName\bin\Release"
+      #     $dest = Join-Path $PWD.Path "customization\Customizations\$projectName\Bin"
+      #     New-Item -ItemType Directory -Force -Path $dest | Out-Null
+      #     Copy-Item -LiteralPath (Join-Path $source $dll) -Destination $dest -Force
+      #     if (Test-Path (Join-Path $source $pdb)) {
+      #       Copy-Item -LiteralPath (Join-Path $source $pdb) -Destination $dest -Force
+      #     }
+      #   shell: pwsh
 
-      - name: Build Customization Package
-        id: build
-        shell: pwsh
-        run: |
-          $date = Get-Date -Format "yyyyMMdd"
-          $zipName = "AcumaticaUSSFenceCustomizations[2024R1$($date)]"
-          echo "zipName=$zipName" >> $env:GITHUB_OUTPUT
-          pwsh ./buildCustomization.ps1 $zipName
+      # - name: Build Customization Package
+      #   id: build
+      #   shell: pwsh
+      #   run: |
+      #     $date = Get-Date -Format "yyyyMMdd"
+      #     $zipName = "AcumaticaUSSFenceCustomizations[2024R1$($date)]"
+      #     echo "zipName=$zipName" >> $env:GITHUB_OUTPUT
+      #     pwsh ./buildCustomization.ps1 $zipName
 
-      - name: Upload ZIP Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.build.outputs.zipName }}
-          path: build/*.zip
+      # - name: Upload ZIP Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ steps.build.outputs.zipName }}
+      #     path: build/*.zip
 
       # - name: Run Publish Customization
       #   shell: pwsh
