@@ -67,11 +67,11 @@ jobs:
           name: ${{ steps.build.outputs.zipName }}
           path: build/*.zip
 
-      - name: Run Publish Customization
-        shell: pwsh
-        env:
-          ACUMATICA_URL: ${{ secrets.ACUMATICA_DEV_URL }}
-          ACUMATICA_USERNAME: ${{ secrets.ACUMATICA_DEV_USERNAME }}
-          ACUMATICA_PASSWORD: ${{ secrets.ACUMATICA_DEV_PASSWORD }}
-        run: |
-          ./publishCustomization.ps1 "${{ steps.build.outputs.zipName }}"
+      # - name: Run Publish Customization
+      #   shell: pwsh
+      #   env:
+      #     ACUMATICA_URL: ${{ secrets.ACUMATICA_DEV_URL }}
+      #     ACUMATICA_USERNAME: ${{ secrets.ACUMATICA_DEV_USERNAME }}
+      #     ACUMATICA_PASSWORD: ${{ secrets.ACUMATICA_DEV_PASSWORD }}
+      #   run: |
+      #     ./publishCustomization.ps1 "${{ steps.build.outputs.zipName }}"
