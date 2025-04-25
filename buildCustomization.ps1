@@ -55,7 +55,7 @@ if (![string]::IsNullOrWhiteSpace($zipFileName)) {
     }
 }
 
-$cmd = "CustomizationPackageTools\bin\Release\net8.0\CustomizationPackageTools.exe"
+$cmd = "dlls\CustomizationPackageTool\CustomizationPackageTools.exe"
 
 # Execute the build command safely
 &$cmd build --customizationpath "$customizationPath" --packagefilename "$zipFileName" --description "$Description" --level $Level
