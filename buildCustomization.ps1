@@ -60,4 +60,11 @@ $cmd = "dlls\CustomizationPackageTool\CustomizationPackageTools.exe"
 # Execute the build command safely
 &$cmd build --customizationpath "$customizationPath" --packagefilename "$zipFileName" --description "$Description" --level $Level
 
-Write-Host "Customization package created successfully: $zipFileName"
+#Write-Host "Customization package created successfully: $zipFileName"
+# Validate if ZIP was created
+if (Test-Path -LiteralPath $zipFileName) {
+    Write-Host "Customization package created successfully: $zipFileName"
+} else {
+    Write-Host "Error: ZIP file was not created at $zipFileName"
+    exit 1
+}
