@@ -1226,11 +1226,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\POC\\acumatica-customization-ci-main\\CustomizationPackageTools\\CustomizationPackageTools.csproj",
+      "projectUniqueName": "F:\\POC\\acumatica-customization-cicd-main\\CustomizationPackageTools\\CustomizationPackageTools.csproj",
       "projectName": "CustomizationPackageTools",
-      "projectPath": "F:\\POC\\acumatica-customization-ci-main\\CustomizationPackageTools\\CustomizationPackageTools.csproj",
+      "projectPath": "F:\\POC\\acumatica-customization-cicd-main\\CustomizationPackageTools\\CustomizationPackageTools.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "F:\\POC\\acumatica-customization-ci-main\\CustomizationPackageTools\\obj\\",
+      "outputPath": "F:\\POC\\acumatica-customization-cicd-main\\CustomizationPackageTools\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
