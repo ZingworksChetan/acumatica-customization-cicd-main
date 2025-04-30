@@ -2,8 +2,6 @@ param (
     [string]$versionName  # Accepts version name as an argument
 )
 
-$ErrorActionPreference = "Stop"
-
 if (-not $versionName) {
     Write-Host "Error: versionName parameter is required."
     exit 1
@@ -20,12 +18,26 @@ $serverUrl = $env:ACUMATICA_URL
 $username = $env:ACUMATICA_USERNAME
 $password = $env:ACUMATICA_PASSWORD
 
+#Ensure serverUrl exist
+if (-not $serverUrl -or $serverUrl.Trim() -eq "") {
+    Write-Host "Error: ACUMATICA_URL is missing"
+    exit 1
+}
+#Ensure username exist
+if (-not $username -or $username.Trim() -eq "") {
+    Write-Host "Error: ACUMATICA_USERNAME is missing"
+    exit 1
+}
+#Ensure password exist
+if (-not $password -or $password.Trim() -eq "") {
+    Write-Host "Error: ACUMATICA_PASSWORD is missing"
+    exit 1
+}
 # Ensure the ZIP file exists
 if (-not (Test-Path -LiteralPath $zipFilePath)) {
     Write-Host "Error: Customization package '$zipFilePath' not found. Cannot publish."
     exit 1
 }
-
 # Check if XML file exists
 if (-not (Test-Path -LiteralPath $xmlFilePath)) {
     Write-Host "Error: ProjectMetadata.xml file not found at '$xmlFilePath'"
@@ -53,8 +65,3 @@ $cmd = "dlls\CustomizationPackageTool\CustomizationPackageTools.exe"
 
     # Execute the publish command safely
     &$cmd publish --packagefilename "$zipFilePath" --packagename "$packageName" --url "$serverUrl" --username "$username" --password "$password" --description "$Description" --level "$Level"
-
-if ($LASTEXITCODE -ne 0) {
-  Write-Host "Error: publish command failed with exit code $LASTEXITCODE"
-exit $LASTEXITCODE
-}
