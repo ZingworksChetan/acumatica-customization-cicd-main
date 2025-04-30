@@ -52,7 +52,7 @@ $cmd = "dlls\CustomizationPackageTool\CustomizationPackageTools.exe"
 try {
     # Execute the publish command safely
     &$cmd publish --packagefilename "$zipFilePath" --packagename "$packageName" --url "$serverUrl" --username "$username" --password "$password" --description "$Description" --level "$Level"
-catch {
+}catch {
     Write-Host "Error occurred while Publishing customization package: $_" -ForegroundColor Red
     exit 1
 }
