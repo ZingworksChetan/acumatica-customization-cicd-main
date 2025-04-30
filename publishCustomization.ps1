@@ -2,6 +2,8 @@ param (
     [string]$versionName  # Accepts version name as an argument
 )
 
+$ErrorActionPreference = "Stop"
+
 if (-not $versionName) {
     Write-Host "Error: versionName parameter is required."
     exit 1
@@ -49,10 +51,10 @@ Write-Host "Level of PackG: $Level"
 
 $cmd = "dlls\CustomizationPackageTool\CustomizationPackageTools.exe"
 
-try {
     # Execute the publish command safely
     &$cmd publish --packagefilename "$zipFilePath" --packagename "$packageName" --url "$serverUrl" --username "$username" --password "$password" --description "$Description" --level "$Level"
-}catch {
-    Write-Host "Error occurred while Publishing customization package: $_" -ForegroundColor Red
-    exit 1
+
+if ($LASTEXITCODE -ne 0) {
+  Write-Host "Error: publish command failed with exit code $LASTEXITCODE"
+exit $LASTEXITCODE
 }
