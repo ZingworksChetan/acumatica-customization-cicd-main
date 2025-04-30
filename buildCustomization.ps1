@@ -57,14 +57,17 @@ if (![string]::IsNullOrWhiteSpace($zipFileName)) {
 
 $cmd = "dlls\CustomizationPackageTool\CustomizationPackageTools.exe"
 
-# Execute the build command safely
-&$cmd build --customizationpath "$customizationPath" --packagefilename "$zipFileName" --description "$Description" --level $Level
-
-#Write-Host "Customization package created successfully: $zipFileName"
-# Validate if ZIP was created
-if (Test-Path -LiteralPath $zipFileName) {
-    Write-Host "Customization package created successfully: $zipFileName"
-} else {
-    Write-Host "Error: ZIP file was not created at $zipFileName"
+try {
+    &$cmd build --customizationpath "$customizationPath" --packagefilename "$zipFileName" --description "$Description" --level $Level
+    
+    if (Test-Path -LiteralPath "$zipFileName") {
+        Write-Host "Customization package created successfully: $zipFileName"
+    } else {
+        Write-Host "Error: Customization package was not created!" -ForegroundColor Red
+        exit 1
+    }
+}
+catch {
+    Write-Host "Error occurred while building customization package: $_" -ForegroundColor Red
     exit 1
 }
