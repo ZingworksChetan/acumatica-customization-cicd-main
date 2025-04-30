@@ -18,19 +18,21 @@ $serverUrl = $env:ACUMATICA_URL
 $username = $env:ACUMATICA_USERNAME
 $password = $env:ACUMATICA_PASSWORD
 
+$missing = @()
 #Ensure serverUrl exist
 if (-not $serverUrl -or $serverUrl.Trim() -eq "") {
-    Write-Host "Error: ACUMATICA_URL is missing"
-    exit 1
+    $missing += "ACUMATICA_URL"
 }
 #Ensure username exist
 if (-not $username -or $username.Trim() -eq "") {
-    Write-Host "Error: ACUMATICA_USERNAME is missing"
-    exit 1
+    $missing += "ACUMATICA_USERNAME"
 }
 #Ensure password exist
 if (-not $password -or $password.Trim() -eq "") {
-    Write-Host "Error: ACUMATICA_PASSWORD is missing"
+    $missing += "ACUMATICA_PASSWORD"
+}
+if ($missing.Count -gt 0) {
+    Write-Host "Error: The following required environment variables are missing:`n - $($missing -join "`n - ")"
     exit 1
 }
 # Ensure the ZIP file exists
